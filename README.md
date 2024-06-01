@@ -1,7 +1,19 @@
 
 # Interview Management System
 
-The Interview Management System is a Node.js application integrated with Sequelize ORM to facilitate efficient management of interviews. It provides a robust backend infrastructure for handling interview-related operations such as user authentication, scheduling meetings, and data management.
+## Project Introduction
+
+Welcome to our Interview Management System! This project aims to streamline the process of managing interviews by providing a centralized platform for interviewers and interviewees to schedule, track, and conduct interviews efficiently.
+
+### Tech Stack
+
+- **Node.js**: The backend of the application is built using Node.js, allowing for efficient handling of server-side logic.
+- **Express.js**: We utilize Express.js as the web application framework for Node.js, enabling us to create robust and scalable APIs.
+- **Sequelize**: Sequelize is used as the ORM (Object-Relational Mapping) library for interacting with the database, providing a simple and intuitive way to perform database operations.
+- **AWS RDS**: Our database is hosted on Amazon RDS (Relational Database Service), offering high availability, scalability, and security for our data storage needs.
+- **JWT (JSON Web Tokens)**: For secure authentication and authorization, we use JWT to generate and verify tokens, allowing users to access protected routes and resources securely.
+
+With this tech stack, we aim to deliver a reliable and user-friendly solution for managing interviews effectively. Let's dive in and explore the features of our Interview Management System!
 
 ## Installation
 
