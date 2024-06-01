@@ -1,8 +1,6 @@
 
 # Interview Management System
 
-## Project Introduction
-
 Welcome to our Interview Management System! This project aims to streamline the process of managing interviews by providing a centralized platform for interviewers and interviewees to schedule, track, and conduct interviews efficiently.
 
 ### Tech Stack
