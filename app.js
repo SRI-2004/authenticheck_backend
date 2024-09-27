@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('./utils/db'); // Import the db.js file
+const cors = require('cors');
 
 // Create Express app
 const app = express();
@@ -9,7 +10,7 @@ const app = express();
 const authRouter = require('./routes/auth');
 const interviewerRouter = require('./routes/interviewer');
 const intervieweeRouter = require('./routes/interviewee');
-
+app.use(cors())
 // Create Express app
 // Body parser middleware
 app.use(bodyParser.json());
