@@ -34,7 +34,25 @@ const Meeting = sequelize.define('Meeting', {
       model: Interviewee,
       key: 'interviewee_id'
     }
-  }
+  },
+  recruiter_mail: {
+  type: DataTypes.STRING,
+  allowNull: false
+  },
+  interviewer_mail: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  interviewee_mail: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  meet_link: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+
 });
 
 // Define associations

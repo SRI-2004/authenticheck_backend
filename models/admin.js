@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Interviewer = sequelize.define('Interviewer', {
-  interviewer_id: {
+const Admin = sequelize.define('Admin', {
+  admin_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -49,16 +49,15 @@ const Interviewer = sequelize.define('Interviewer', {
     defaultValue: true,
     allowNull: true,
   },
-  is_interviewer: {
+  is_admin:{
     type: DataTypes.BOOLEAN,
-    defaultValue: true,
-    allowNull: true,
+    defaultValue:true,
   },
-  is_admin: {
+  is_interviewer: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
     allowNull: true,
   },
 });
 
-module.exports = Interviewer;
+module.exports = Admin;

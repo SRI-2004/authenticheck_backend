@@ -28,15 +28,15 @@ const Interviewee = sequelize.define('Interviewee', {
     allowNull: false
   },
   id_photo: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true
   },
   face_id: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true
   },
   voice_id: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true
   },
   dob: {
@@ -46,6 +46,11 @@ const Interviewee = sequelize.define('Interviewee', {
   isAdmin: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+    allowNull: true,
+  },
+  is_interviewee: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
     allowNull: true,
   },
 });

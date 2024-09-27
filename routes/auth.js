@@ -2,38 +2,71 @@ const express = require('express');
 const router = express.Router();
 const Interviewer = require('../models/interviewer');
 const Interviewee = require('../models/interviewee');
+const Recruiter = require('../models/recruiter')
+const Admin = require('../models/admin')
 const jwt = require('jsonwebtoken');
 
 // Signup interviewer
 router.post('/signup_interviewer', async (req, res) => {
-    const { name, phone_no, email_id, password, organisation, id_photo, dob } = req.body;
+    const { name, phone_no, email_id, password, organisation, id_photo, dob, isRecruiter,is_admin} = req.body;
 
     try {
-        const newInterviewer = await Interviewer.create({
-            name,
-            phone_no,
-            email_id,
-            password,
-            organisation,
-            id_photo,
-            dob
-        });
+        let newUser;
+        if(is_admin){
+            newUser = await Admin.create({
+                name,
+                phone_no,
+                email_id,
+                password,
+                organisation,
+                id_photo,
+                dob,
+            });
+        }
+
+        else if (isRecruiter) {
+            // Create Recruiter
+            newUser = await Recruiter.create({
+                name,
+                phone_no,
+                email_id,
+                password,
+                organisation,
+                id_photo,
+                dob,
+                isRecruiter
+            });
+        } else {
+            // Create Interviewer
+            const is_interviewer = true;
+            newUser = await Interviewer.create({
+                name,
+                phone_no,
+                email_id,
+                password,
+                organisation,
+                id_photo,
+                is_interviewer,
+                dob,
+                isRecruiter: false // Explicitly set isRecruiter to false for Interviewer
+            });
+        }
 
         // Generate JWT token
         const token = jwt.sign(
-            { interviewerId: newInterviewer.interviewer_id, isAdmin: true },
+            { userId: newUser.id, isAdmin: false },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
         res.status(201).json({
-            message: 'Interviewer created successfully',
-            interviewer: newInterviewer,
+            message: `${isRecruiter ? 'Recruiter' : 'Interviewer'} created successfully`,
+            user: newUser,
             token: token
         });
     } catch (error) {
         res.status(500).json({
-            message: 'Error creating interviewer',
+            message: 'Error creating user',
             error: error.message
         });
     }
@@ -42,6 +75,7 @@ router.post('/signup_interviewer', async (req, res) => {
 // Signup interviewee
 router.post('/signup_interviewee', async (req, res) => {
     const { name, phone_no, email_id, password, id_photo, face_id, voice_id, dob } = req.body;
+    const is_interviewee = true;
 
     try {
         const newInterviewee = await Interviewee.create({
@@ -52,6 +86,7 @@ router.post('/signup_interviewee', async (req, res) => {
             id_photo,
             face_id,
             voice_id,
+            is_interviewee,
             dob
         });
 
@@ -89,7 +124,7 @@ router.post('/login', async (req, res) => {
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
-            return res.status(200).json({ token: token });
+            return res.status(200).json({ token: token, interviewer });
         }
 
         // Check if the user is an interviewee
@@ -101,7 +136,27 @@ router.post('/login', async (req, res) => {
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
-            return res.status(200).json({ token: token });
+            return res.status(200).json({ token: token, interviewee });
+        }
+        const recruiter = await Recruiter.findOne({ where: { email_id, password } });
+        if (recruiter) {
+            // Generate JWT token for recruiter
+            const token = jwt.sign(
+                { userId: recruiter.recruiter_id, isAdmin: true, isRecruiter: true },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+            return res.status(200).json({ token, recruiter });
+        }
+        const admin = await Admin.findOne({ where: { email_id: email_id, password: password } });
+        if (admin) {
+            // Generate JWT token for interviewer
+            const token = jwt.sign(
+                { interviewerId: admin.admin_id, isAdmin: true },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+            return res.status(200).json({ token: token, admin });
         }
 
         // If neither interviewer nor interviewee found
