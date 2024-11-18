@@ -47,7 +47,7 @@ router.post('/create_meetings', verifyToken, isAdmin, async (req, res) => {
         if (!interviewee) {
             return res.status(404).json({ message: 'Interviewee not found' });
         }
-        const website = 'https://meet.google.com';
+        const website = 'https://authenticheckv3.netlify.app/';
         // Create the meeting
         const newMeeting = await Meeting.create({
             interviewer_id,
