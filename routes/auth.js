@@ -5,6 +5,7 @@ const Interviewee = require('../models/interviewee');
 const Recruiter = require('../models/recruiter')
 const Admin = require('../models/admin')
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 // Signup interviewer
 router.post('/signup_interviewer', async (req, res) => {
@@ -73,11 +74,20 @@ router.post('/signup_interviewer', async (req, res) => {
 });
 
 // Signup interviewee
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: 'authenticheckv2@gmail.com', // Your email
+        pass: 'qbni kcdx izyv wemq' // Your app-specific password
+    }
+});
+
 router.post('/signup_interviewee', async (req, res) => {
     const { name, phone_no, email_id, password, id_photo, face_id, voice_id, dob } = req.body;
     const is_interviewee = true;
 
     try {
+        // Create a new interviewee in the database
         const newInterviewee = await Interviewee.create({
             name,
             phone_no,
@@ -97,19 +107,52 @@ router.post('/signup_interviewee', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(201).json({
-            message: 'Interviewee created successfully',
-            interviewee: newInterviewee,
-            token: token
+        const mailOptions = {
+            from: 'authenticheckv2@gmail.com', // Sender email
+            to: email_id, // Recipient email
+            subject: 'Welcome to Authenticheck! Your Account Details',
+            html: `
+                <h1>Welcome, ${name}!</h1>
+                <p>Thank you for signing up as an interviewee on Authenticheck.</p>
+                <p>Your account has been successfully created. Below are your login details:</p>
+                <ul>
+                    <li><strong>Email:</strong> ${email_id}</li>
+                    <li><strong>Password:</strong> ${password}</li>
+                </ul>
+                <p>Please keep this information secure and do not share it with anyone.</p>
+                <p>If you have any questions, feel free to reply to this email.</p>
+                <br />
+                <p>Best regards,</p>
+                <p>The Authenticheck Team</p>
+            `
+        };
+
+        // Send email using Nodemailer
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error('Error sending email:', err);
+                return res.status(500).json({
+                    message: 'Error sending email to interviewee',
+                    error: err.message
+                });
+            }
+            console.log('Email sent:', info.response);
+
+            // Respond with success
+            res.status(201).json({
+                message: 'Interviewee created successfully. Email sent.',
+                interviewee: newInterviewee,
+                token: token
+            });
         });
     } catch (error) {
+        console.error('Error creating interviewee:', error.message);
         res.status(500).json({
             message: 'Error creating interviewee',
             error: error.message
         });
     }
 });
-
 // Login
 router.post('/login', async (req, res) => {
     const { email_id, password } = req.body;
